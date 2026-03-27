@@ -366,7 +366,7 @@ curl -s -X POST "http://localhost:8080/visa-applications/APP_ID/notes" \
   -d '{ "content": "Applicant requested expedited processing." }'
 ```
 
-### 3. Frontend (`frontend/.env.local`)
+### 4. Frontend (`frontend/.env.local`)
 
 ```env
 NEXT_PUBLIC_API_URL="http://localhost:8080"
