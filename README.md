@@ -29,20 +29,29 @@ The project targets a visa operations workflow with authentication, authorizatio
 
 ### Folder structure (high-level)
 
-- `backend/src/auth`: JWT auth, token verification, guards, role policies.
-- `backend/src/users`: operator management service and controllers.
-- `backend/src/visa-applications`: core visa lifecycle APIs and business logic.
-- `backend/src/common`: rate-limit guard, decorators, and exception filters.
-- `backend/src/prisma`: Prisma module/service integration.
-- `backend/prisma/schema.prisma`: relational model and index definitions.
-- `frontend/app`: App Router pages, layouts, and route-level composition.
-- `frontend/hooks`: query/mutation hooks and debounce utility.
-- `frontend/services`: typed API client layer.
-- `frontend/components`: reusable UI blocks.
-- `frontend/contexts`: auth and toast state containers.
-- `scripts`: local PostgreSQL bootstrap script.
+```txt
+.
+├── backend/
+│   ├── src/
+│   │   ├── auth/                 # JWT auth, token verification, guards, role policies.
+│   │   ├── users/                # operator management service and controllers.
+│   │   ├── visa-applications/    # core visa lifecycle APIs and business logic.
+│   │   ├── common/               # rate-limit guard, decorators, and exception filters.
+│   │   └── prisma/               # Prisma module/service integration.
+│   └── prisma/
+│       └── schema.prisma         # relational model and index definitions.
+├── frontend/
+│   ├── app/                      # App Router pages, layouts, and route-level composition.
+│   ├── hooks/                    # query/mutation hooks and debounce utility.
+│   ├── services/                 # typed API client layer.
+│   ├── components/               # reusable UI blocks.
+│   └── contexts/                 # auth and toast state containers.
+└── scripts/
+    └── setup-local-postgres.sh   # local PostgreSQL bootstrap script.
+```
 
-### Backend deep dive (NestJS + Prisma)
+
+### Backend (NestJS + Prisma)
 
 - **API boundary design**
   - REST endpoints are grouped by bounded context: `/auth`, `/users`, `/visa-applications`.
@@ -80,7 +89,7 @@ The project targets a visa operations workflow with authentication, authorizatio
   - Relation integrity errors map to bad-request errors.
   - This keeps client error handling predictable and stable.
 
-### Frontend deep dive (Next.js + React Query)
+### Frontend (Next.js + React Query)
 
 - **Route and component architecture**
   - App Router structures the UI by domain route.
