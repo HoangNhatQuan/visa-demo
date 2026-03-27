@@ -162,12 +162,15 @@ App: `http://localhost:3000` (`/login`).
 
 ### Danh sách
 
-- [ ] Chèn ảnh màn danh sách hồ sơ visa ở đây.
+<img width="1463" height="802" alt="image" src="https://github.com/user-attachments/assets/188f95ff-31b5-4914-bc74-723eba38516d" />
+
 
 ### Chi tiết
 
-- [ ] Chèn ảnh màn chi tiết hồ sơ visa ở đây.
+<img width="1364" height="857" alt="image" src="https://github.com/user-attachments/assets/2e642fce-04bd-454b-99d4-757b9a477c27" />
+
 
 ### Đổi status hoặc thêm note
 
-- [ ] Chèn ảnh thao tác đổi status hoặc thêm note ở đây.
+<img width="1299" height="857" alt="image" src="https://github.com/user-attachments/assets/7e3862a3-5789-47fd-a8f3-92c23deb3c4b" />
+
