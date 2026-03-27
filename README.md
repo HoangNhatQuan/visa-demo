@@ -50,7 +50,6 @@ The project targets a visa operations workflow with authentication, authorizatio
     └── setup-local-postgres.sh   # local PostgreSQL bootstrap script.
 ```
 
-
 ### Backend (NestJS + Prisma)
 
 - **API boundary design**
@@ -146,7 +145,6 @@ The project targets a visa operations workflow with authentication, authorizatio
 - Add observability stack with structured logging, tracing, and metrics.
 - Upgrade search with PostgreSQL full-text and trigram indexing at higher data volume.
 
-
 ## 6. Quick run
 
 ### 1. Database (from repo root)
@@ -172,6 +170,201 @@ pnpm run start:dev
 ```
 
 API: `http://localhost:8080`
+
+### 3. API request/response examples
+
+All successful responses follow the shape:
+
+```json
+{
+  "statusCode": 200,
+  "message": "Success",
+  "data": {}
+}
+```
+
+All error responses follow the shape:
+
+```json
+{
+  "statusCode": 400,
+  "error": "BAD_REQUEST",
+  "message": "Reason here",
+  "data": null
+}
+```
+
+#### Auth
+
+**Register**
+
+```bash
+curl -s -X POST "http://localhost:8080/auth/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "operator1@example.com",
+    "password": "secret123",
+    "name": "Operator One"
+  }'
+```
+
+Example response:
+
+```json
+{
+  "statusCode": 201,
+  "message": "Created successfully",
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+**Login**
+
+```bash
+curl -s -X POST "http://localhost:8080/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "operator1@example.com",
+    "password": "secret123"
+  }'
+```
+
+Example response:
+
+```json
+{
+  "statusCode": 200,
+  "message": "Success",
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+#### Users (ADMIN only)
+
+Set token once for the examples below:
+
+```bash
+export TOKEN="YOUR_JWT_ACCESS_TOKEN"
+```
+
+**List operators**
+
+```bash
+curl -s "http://localhost:8080/users/operators" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Example response:
+
+```json
+{
+  "statusCode": 200,
+  "message": "Success",
+  "data": [
+    {
+      "id": "9d4d45a8-0c3f-4d54-9b93-2f6f9c0d2b5a",
+      "email": "operator1@example.com",
+      "name": "Operator One",
+      "role": "OPERATOR",
+      "createdAt": "2026-03-27T10:00:00.000Z"
+    }
+  ]
+}
+```
+
+**Create operator**
+
+```bash
+curl -s -X POST "http://localhost:8080/users/operators" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "operator2@example.com",
+    "password": "secret123",
+    "name": "Operator Two"
+  }'
+```
+
+#### Visa applications
+
+**Create application (ADMIN only)**
+
+```bash
+curl -s -X POST "http://localhost:8080/visa-applications" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "applicantName": "Nguyen Van A",
+    "email": "applicant@example.com",
+    "nationality": "Vietnam",
+    "destinationCountry": "Japan",
+    "visaType": "TOURIST",
+    "travelDate": "2026-12-01T00:00:00.000Z"
+  }'
+```
+
+**List applications (filter + search + pagination)**
+
+```bash
+curl -s "http://localhost:8080/visa-applications?status=PENDING&q=nguyen&page=1&limit=10" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Example response:
+
+```json
+{
+  "statusCode": 200,
+  "message": "Success",
+  "data": {
+    "items": [],
+    "total": 0,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 0
+  }
+}
+```
+
+**Get application detail**
+
+```bash
+curl -s "http://localhost:8080/visa-applications/APP_ID" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+**Update application status**
+
+```bash
+curl -s -X PATCH "http://localhost:8080/visa-applications/APP_ID/status" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "status": "APPROVED" }'
+```
+
+Example error (invalid transition):
+
+```json
+{
+  "statusCode": 400,
+  "error": "BAD_REQUEST",
+  "message": "Invalid status transition from REJECTED to APPROVED",
+  "data": null
+}
+```
+
+**Add note**
+
+```bash
+curl -s -X POST "http://localhost:8080/visa-applications/APP_ID/notes" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "content": "Applicant requested expedited processing." }'
+```
 
 ### 3. Frontend (`frontend/.env.local`)
 

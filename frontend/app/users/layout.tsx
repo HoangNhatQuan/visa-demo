@@ -1,0 +1,9 @@
+import { AppLayout } from '@/components/AppLayout';
+
+export default function UsersLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <AppLayout requireAdmin>{children}</AppLayout>;
+}
