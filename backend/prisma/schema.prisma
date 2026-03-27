@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum VisaApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  DOCS_REQUIRED
+  APPROVED
+  REJECTED
+}
+
+enum Role {
+  ADMIN
+  OPERATOR
+}
+
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(OPERATOR)
+  createdAt DateTime @default(now())
+
+  notes     VisaApplicationNote[]
+
+  @@index([role, createdAt, id])
+}
+
+model VisaApplication {
+  id                 String                  @id @default(uuid()) @db.Uuid
+  applicantName     String
+  email              String
+  nationality        String
+  destinationCountry String
+  visaType          String
+  travelDate         DateTime
+  status             VisaApplicationStatus   @default(SUBMITTED)
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+
+  notes              VisaApplicationNote[]
+
+  @@index([status])
+  @@index([email])
+  @@index([createdAt, id])
+  @@index([status, createdAt, id])
+}
+
+model VisaApplicationNote {
+  id            String          @id @default(uuid()) @db.Uuid
+  applicationId String          @db.Uuid
+  authorId      String          @db.Uuid
+  content       String
+  createdAt     DateTime        @default(now())
+
+  application   VisaApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  author        User            @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([applicationId, createdAt])
+}
